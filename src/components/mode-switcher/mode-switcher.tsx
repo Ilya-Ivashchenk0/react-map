@@ -1,5 +1,6 @@
 import { useState, type FC } from 'react'
-import type { ModeSwitcherProps, ModeType } from './types'
+import type { ModeSwitcherProps } from './types'
+import type { ModeType } from '@/types'
 
 export const ModeSwitcher: FC<ModeSwitcherProps> = ({
   className = '',

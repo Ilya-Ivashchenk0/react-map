@@ -1,4 +1,4 @@
-export type ModeType = 'default' | 'polygons' | 'lines' | 'markers'
+import type { ModeType } from "@/types"
 
 export interface ModeSwitcherProps {
   className?: string

@@ -1,0 +1,1 @@
+export type ModeType = 'default' | 'polygons' | 'lines' | 'markers'

@@ -1,10 +1,14 @@
-'use client'
-
-import type { LngLat } from '@yandex/ymaps3-types'
+import type { DrawingStyle, LngLat } from '@yandex/ymaps3-types'
 import { useYandexMaps } from '@/hooks/use-yandex-maps'
 import type { MapProps } from '../types'
+import { useCallback, useMemo, useState } from 'react'
 
-export const Map: React.FC<MapProps> = ({ coords, controls, className }) => {
+export const Map: React.FC<MapProps> = ({
+  mode,
+  location,
+  controls,
+  className
+}) => {
   const yandexMapModules = useYandexMaps()
 
   if (!yandexMapModules) {
@@ -30,11 +34,6 @@ export const Map: React.FC<MapProps> = ({ coords, controls, className }) => {
     YMapClusterer,
     clusterByGrid
   } = yandexMapModules
-
-  const location = {
-    center: coords,
-    zoom: 11
-  }
 
   return (
     <YMap
@@ -64,31 +63,7 @@ export const Map: React.FC<MapProps> = ({ coords, controls, className }) => {
         style={polygonStyle}
       /> */}
 
-      {/* {events.map(event => (
-        <YMapMarker
-          coordinates={
-            [
-              event.coordinates?.coordinates[0],
-              event.coordinates?.coordinates[1]
-            ] as LngLat
-          }
-          draggable={false}
-          zIndex={2}
-          key={event.id}
-          onClick={() => handleMarkerClick(event.id as string)}
-        >
-          <div className="marker">
-            <Image
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="image"
-              src={`/api/image?id=${event.main_image as string}`}
-              width={63}
-              height={63}
-              alt=""
-            />
-          </div>
-        </YMapMarker>
-      ))} */}
+      {/* <YMapFeature geometry={geometry} style={style} /> */}
     </YMap>
   )
 }
