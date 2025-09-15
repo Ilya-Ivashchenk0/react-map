@@ -13,7 +13,7 @@ export const Button: FC<ButtonProps> = ({
   const variantStyles = {
     primary: 'bg-primary hover:bg-primary-hover',
     accent: 'bg-accent hover:bg-accent-hover',
-    secondary: 'border-border text-text-primary hover:bg-surface'
+    secondary: 'bg-gray-600 hover:bg-gray-700 text-white border border-gray-500'
   }
 
   const variantStyle = variantStyles[variant] || variantStyles.primary
