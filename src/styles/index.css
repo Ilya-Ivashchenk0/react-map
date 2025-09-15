@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Основные цвета */
+  --color-primary: #2563eb; /* Синий - основной акцент */
+  --color-primary-hover: #1d4ed8; /* Синий для hover состояний */
+
+  /* Нейтральные цвета */
+  --color-background: #ffffff; /* Основной фон */
+  --color-surface: #f8fafc; /* Поверхности, карточки */
+  --color-border: #e2e8f0; /* Границы, разделители */
+
+  /* Текст */
+  --color-text-primary: #1e293b; /* Основной текст */
+  --color-text-secondary: #64748b; /* Вторичный текст */
+  --color-text-muted: #94a3b8; /* Неактивный текст */
+
+  /* Функциональные цвета */
+  --color-success: #10b981; /* Успех */
+  --color-warning: #f59e0b; /* Предупреждение */
+  --color-error: #ef4444; /* Ошибка */
+  --color-info: #3b82f6; /* Информация */
+
+  /* Дополнительные акцентные цвета */
+  --color-accent: #8b5cf6; /* Дополнительный акцент */
+  --color-accent-hover: #7c3aed;
+}
+
+@theme {
+  /* Основные цвета */
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+
+  /* Нейтральные цвета */
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+
+  /* Текст */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+
+  /* Функциональные цвета */
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
+  --color-info: var(--color-info);
+
+  /* Акцентные цвета */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+}
+
+html,
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
