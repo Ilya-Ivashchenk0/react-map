@@ -1,6 +1,13 @@
 export type ModeType = 'default' | 'polygon' | 'markers'
 
-export type PolygonColor = 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'orange' | 'pink'
+export type PolygonColor =
+  | 'blue'
+  | 'red'
+  | 'green'
+  | 'yellow'
+  | 'purple'
+  | 'orange'
+  | 'pink'
 
 export interface Polygon {
   id: string
@@ -14,7 +21,8 @@ export interface Polygon {
 export interface Marker {
   id: string
   coordinates: [number, number]
-  title?: string
+  title: string
+  color: PolygonColor
 }
 
 export interface MapState {

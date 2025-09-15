@@ -59,7 +59,7 @@ export const Map: React.FC<MapProps> = ({
       if (mode !== 'polygon' || !isDrawing) return
       event.stopPropagation()
       setIsPointerDown(true)
-      pointCounterRef.current = 0 // Сбрасываем счетчик при начале рисования
+      pointCounterRef.current = 0
       const coords: LngLat | undefined = event?.coordinates
       if (!coords || !Array.isArray(coords) || coords.length !== 2) return
       onPolygonPointAdd(coords as [number, number])
@@ -74,17 +74,16 @@ export const Map: React.FC<MapProps> = ({
       const coords: LngLat | undefined = event?.coordinates
       if (!coords || !Array.isArray(coords) || coords.length !== 2) return
 
-      // Увеличиваем счетчик
       pointCounterRef.current += 1
 
-      // Добавляем точку только каждую N-ю или если это первая точка
-      if (pointCounterRef.current % POINT_SKIP_INTERVAL === 0 || pointCounterRef.current === 1) {
-        // Дополнительная проверка на расстояние от последней точки
+      if (
+        pointCounterRef.current % POINT_SKIP_INTERVAL === 0 ||
+        pointCounterRef.current === 1
+      ) {
         if (currentPolygon && currentPolygon.length > 0) {
           const last = currentPolygon[currentPolygon.length - 1]
           const dx = Math.abs(coords[0] - last[0])
           const dy = Math.abs(coords[1] - last[1])
-          // Если точка слишком близко к последней, не добавляем
           if (dx < 0.00001 && dy < 0.00001) return
         }
 
@@ -200,10 +199,12 @@ export const Map: React.FC<MapProps> = ({
             geometry={geometry}
             style={{
               ...style,
-              stroke: [{
-                color: getColorValue(polygon.color),
-                width: isSelected ? 4 : 2
-              }]
+              stroke: [
+                {
+                  color: getColorValue(polygon.color),
+                  width: isSelected ? 4 : 2
+                }
+              ]
             }}
           />
         )
@@ -215,9 +216,12 @@ export const Map: React.FC<MapProps> = ({
       )}
 
       {/* Отображение маркеров */}
-      {markers.map((marker) => (
+      {markers.map(marker => (
         <YMapMarker key={marker.id} coordinates={marker.coordinates}>
-          <div className="bg-red-500 text-white px-2 py-1 rounded text-sm shadow-lg">
+          <div
+            className="rounded px-2 py-1 text-sm font-medium text-white shadow-lg"
+            style={{ backgroundColor: getColorValue(marker.color) }}
+          >
             {marker.title}
           </div>
         </YMapMarker>
@@ -231,32 +235,32 @@ export const Map: React.FC<MapProps> = ({
           <YMapControls position="right">
             <YMapZoomControl />
           </YMapControls>
-          <div className="pointer-events-none absolute top-4 left-1/2 z-99 -translate-x-1/2">
+          <div className="pointer-events-none absolute top-20 left-1/2 z-99 -translate-x-1/2">
             <div className="pointer-events-auto flex gap-2">
               {mode === 'polygon' && !isDrawing && (
                 <Button onClick={onPolygonStart}>Рисовать полигон</Button>
               )}
-              {mode === 'polygon' && currentPolygon && currentPolygon.length >= 3 && (
-                <Button onClick={onPolygonSave} variant="accent">
-                  Сохранить
-                </Button>
-              )}
+              {mode === 'polygon' &&
+                currentPolygon &&
+                currentPolygon.length >= 3 && (
+                  <Button onClick={onPolygonSave} variant="accent">
+                    Сохранить
+                  </Button>
+                )}
               {mode === 'polygon' && (isDrawing || currentPolygon) && (
                 <Button onClick={onPolygonClear} variant="secondary">
                   Очистить
                 </Button>
               )}
               {mode === 'markers' && (
-                <div className="text-sm text-gray-600 bg-white px-3 py-2 rounded shadow">
+                <div className="rounded bg-white px-3 py-2 text-sm text-gray-600 shadow">
                   Кликните на карту для добавления маркера
                 </div>
               )}
             </div>
           </div>
-
         </>
       )}
-
     </YMap>
   )
 }

@@ -8,12 +8,14 @@ export const Button: FC<ButtonProps> = ({
   asChild = false,
   ...props
 }) => {
-  const baseClasses = 'rounded-lg px-4 py-2 text-white transition-colors'
+  const baseClasses = 'rounded-lg px-3 py-1 text-white transition-colors'
 
   const variantStyles = {
     primary: 'bg-primary hover:bg-primary-hover',
     accent: 'bg-accent hover:bg-accent-hover',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white border border-gray-500'
+    secondary:
+      'bg-gray-600 hover:bg-gray-700 text-white border border-gray-500',
+    danger: 'bg-red-500 hover:bg-red-600 text-white border border-red-500'
   }
 
   const variantStyle = variantStyles[variant] || variantStyles.primary
