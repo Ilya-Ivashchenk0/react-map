@@ -2,20 +2,21 @@ import { getColorValue, MESSAGES, UI_CONFIG } from '@/config/constants'
 import type { PolygonMarkerListProps } from './types'
 import type { Marker, Polygon } from '@/types'
 import { Button } from '../button'
+import type { FC } from 'react'
 
-export const PolygonMarkerList = ({
+export const PolygonMarkerList: FC<PolygonMarkerListProps> = ({
   type,
   items,
   selectedId,
   onSelect,
   onReset,
   title
-}: PolygonMarkerListProps) => {
+}) => {
   if (items.length === 0) return null
 
   return (
     <div
-      className={`absolute top-4 right-4 ${UI_CONFIG.CONTROLS_Z_INDEX} ${UI_CONFIG.MAX_LIST_WIDTH} rounded-lg bg-white p-4 shadow-lg`}
+      className={`absolute bottom-8 right-4 ${UI_CONFIG.CONTROLS_Z_INDEX} ${UI_CONFIG.MAX_LIST_WIDTH} rounded-lg bg-white p-4 shadow-lg`}
     >
       <h3 className="mb-3 text-lg font-semibold">{title}</h3>
       <div className={`${UI_CONFIG.MAX_LIST_HEIGHT} space-y-2 overflow-y-auto`}>

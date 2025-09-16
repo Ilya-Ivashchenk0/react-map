@@ -1,8 +1,9 @@
 {
-  "name": "react-map",
+  "name": "react-ymaps3",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "Ilya Ivashchenko",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
