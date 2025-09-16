@@ -1,4 +1,3 @@
-import { Button } from '@/components/button'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Map } from '@/components/map'
@@ -6,11 +5,21 @@ import { ModeSwitcher } from '@/components/mode-switcher'
 import { NameColorForm } from '@/components/name-color-form'
 import type { ModeType, Polygon, Marker, PolygonColor } from '@/types'
 import type { LngLat } from '@yandex/ymaps3-types'
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, memo } from 'react'
+import { MAP_DEFAULTS, MESSAGES, UI_CONFIG } from '@/config/constants/app'
+import {
+  createPolygon,
+  createMarker,
+  validatePolygon,
+  validateMarker
+} from '@/utils/data'
+import { PolygonMarkerList } from '@/components/polygon-marker-list'
 
-export const HomePage = () => {
+// Главная страница приложения с картой и управлением полигонами/маркерами
+export const HomePage = memo(() => {
+  // Основные состояния приложения
   const [mode, setMode] = useState<ModeType>('default')
-  const [mapCenter] = useState<LngLat>([30.314809, 59.938848])
+  const [mapCenter] = useState<LngLat>(MAP_DEFAULTS.DEFAULT_CENTER)
 
   // Состояние для полигонов и маркеров
   const [polygons, setPolygons] = useState<Polygon[]>([])
@@ -40,27 +49,14 @@ export const HomePage = () => {
   const [markerName, setMarkerName] = useState('')
   const [markerColor, setMarkerColor] = useState<PolygonColor>('blue')
 
+  // Настройки расположения карты
   const location = useMemo(
     () => ({
       center: mapCenter,
-      zoom: 10
+      zoom: MAP_DEFAULTS.DEFAULT_ZOOM
     }),
     [mapCenter]
   )
-
-  // Функция для получения цветовых значений
-  const getColorValue = (color: PolygonColor): string => {
-    const colors = {
-      blue: '#3b82f6',
-      red: '#ef4444',
-      green: '#10b981',
-      yellow: '#f59e0b',
-      purple: '#8b5cf6',
-      orange: '#f97316',
-      pink: '#ec4899'
-    }
-    return colors[color]
-  }
 
   // Обработчики для полигонов
   const handlePolygonStart = useCallback(() => {
@@ -68,8 +64,12 @@ export const HomePage = () => {
     setIsDrawing(true)
   }, [])
 
+  // Обработчик сохранения полигона
   const handlePolygonSave = useCallback(() => {
-    if (currentPolygon && currentPolygon.length >= 3) {
+    if (
+      currentPolygon &&
+      currentPolygon.length >= MAP_DEFAULTS.MIN_POLYGON_POINTS
+    ) {
       // Сохраняем полигон во временное состояние и открываем модальное окно
       setPendingPolygon(currentPolygon)
       setPolygonName(`Полигон ${polygons.length + 1}`)
@@ -80,38 +80,43 @@ export const HomePage = () => {
     }
   }, [currentPolygon, polygons.length])
 
+  // Обработчик сохранения полигона из модального окна
   const handlePolygonModalSave = useCallback(() => {
     if (pendingPolygon && polygonName.trim()) {
-      const newPolygon: Polygon = {
-        id: `polygon-${Date.now()}`,
-        points: pendingPolygon,
-        isClosed: true,
-        color: polygonColor,
-        name: polygonName.trim(),
-        createdAt: new Date()
+      const newPolygon = createPolygon(
+        pendingPolygon,
+        polygonName.trim(),
+        polygonColor
+      )
+
+      if (validatePolygon(newPolygon)) {
+        setPolygons(prev => [...prev, newPolygon])
+        setPendingPolygon(null)
+        setIsPolygonModalOpen(false)
+        setPolygonName('')
       }
-      setPolygons(prev => [...prev, newPolygon])
-      setPendingPolygon(null)
-      setIsPolygonModalOpen(false)
-      setPolygonName('')
     }
   }, [pendingPolygon, polygonName, polygonColor])
 
+  // Обработчик закрытия модального окна полигона
   const handlePolygonModalClose = useCallback(() => {
     setIsPolygonModalOpen(false)
     setPendingPolygon(null)
     setPolygonName('')
   }, [])
 
+  // Обработчик очистки текущего полигона
   const handlePolygonClear = useCallback(() => {
     setCurrentPolygon(null)
     setIsDrawing(false)
   }, [])
 
+  // Обработчик выбора полигона
   const handlePolygonSelect = useCallback((id: string | null) => {
     setSelectedPolygonId(id)
   }, [])
 
+  // Обработчик добавления точки к полигону
   const handlePolygonPointAdd = useCallback(
     (point: [number, number]) => {
       if (mode === 'polygon' && isDrawing) {
@@ -134,28 +139,32 @@ export const HomePage = () => {
     [mode, markers.length]
   )
 
+  // Обработчик сохранения маркера
   const handleMarkerSave = useCallback(() => {
     if (pendingMarkerCoords && markerName.trim()) {
-      const newMarker: Marker = {
-        id: `marker-${Date.now()}`,
-        coordinates: pendingMarkerCoords,
-        title: markerName.trim(),
-        color: markerColor
+      const newMarker = createMarker(
+        pendingMarkerCoords,
+        markerName.trim(),
+        markerColor
+      )
+
+      if (validateMarker(newMarker)) {
+        setMarkers(prev => [...prev, newMarker])
+        setIsMarkerFormOpen(false)
+        setPendingMarkerCoords(null)
+        setMarkerName('')
       }
-      setMarkers(prev => [...prev, newMarker])
-      setIsMarkerFormOpen(false)
-      setPendingMarkerCoords(null)
-      setMarkerName('')
     }
   }, [pendingMarkerCoords, markerName, markerColor])
 
+  // Обработчик отмены создания маркера
   const handleMarkerCancel = useCallback(() => {
     setIsMarkerFormOpen(false)
     setPendingMarkerCoords(null)
     setMarkerName('')
   }, [])
 
-  // Обработчик смены режима
+  // Обработчик смены режима работы карты
   const handleModeChange = useCallback((newMode: ModeType) => {
     setMode(newMode)
     // Очищаем текущий полигон при смене режима
@@ -165,9 +174,12 @@ export const HomePage = () => {
     }
   }, [])
 
-  // Автоматическое завершение рисования при отпускании мыши
+  // Обработчик автоматического завершения рисования полигона
   const handlePolygonAutoFinish = useCallback(() => {
-    if (currentPolygon && currentPolygon.length >= 3) {
+    if (
+      currentPolygon &&
+      currentPolygon.length >= MAP_DEFAULTS.MIN_POLYGON_POINTS
+    ) {
       // Сохраняем полигон во временное состояние и открываем модальное окно
       setPendingPolygon(currentPolygon)
       setPolygonName(`Полигон ${polygons.length + 1}`)
@@ -212,96 +224,48 @@ export const HomePage = () => {
         </div>
 
         {/* Список полигонов */}
-        {mode === 'polygon' && polygons.length > 0 && (
-          <div className="absolute top-4 right-4 z-10 max-w-xs rounded-lg bg-white p-4 shadow-lg">
-            <h3 className="mb-3 text-lg font-semibold">Полигоны</h3>
-            <div className="max-h-64 space-y-2 overflow-y-auto">
-              {polygons.map(polygon => (
-                <div
-                  key={polygon.id}
-                  className={`m-1 cursor-pointer rounded p-2 transition-colors ${
-                    selectedPolygonId === polygon.id
-                      ? 'bg-blue-100 outline-2 outline-blue-500'
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
-                  onClick={() =>
-                    handlePolygonSelect(
-                      selectedPolygonId === polygon.id ? null : polygon.id
-                    )
-                  }
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-4 w-4 rounded"
-                      style={{ backgroundColor: getColorValue(polygon.color) }}
-                    />
-                    <span className="text-sm font-medium">{polygon.name}</span>
-                  </div>
-                  <div className="mt-1 text-xs text-gray-500">
-                    {polygon.points.length} точек
-                  </div>
-                </div>
-              ))}
-              <Button
-                className="mt-4"
-                variant="danger"
-                onClick={() => {
-                  setPolygons([])
-                  setMode('default')
-                }}
-              >
-                Сбросить
-              </Button>
-            </div>
-          </div>
+        {mode === 'polygon' && (
+          <PolygonMarkerList
+            type="polygon"
+            items={polygons}
+            selectedId={selectedPolygonId}
+            onSelect={handlePolygonSelect}
+            onReset={() => {
+              setPolygons([])
+              setMode('default')
+            }}
+            title={MESSAGES.POLYGON_LIST_TITLE}
+          />
         )}
 
         {/* Список маркеров */}
-        {mode === 'markers' && markers.length > 0 && (
-          <div className="absolute top-4 right-4 z-10 max-w-xs rounded-lg bg-white p-4 shadow-lg">
-            <h3 className="mb-3 text-lg font-semibold">Маркеры</h3>
-            <div className="max-h-64 space-y-2 overflow-y-auto">
-              {markers.map(marker => (
-                <div
-                  key={marker.id}
-                  className="rounded bg-gray-50 p-2 transition-colors hover:bg-gray-100"
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-4 w-4 rounded"
-                      style={{ backgroundColor: getColorValue(marker.color) }}
-                    />
-                    <span className="text-sm font-medium">{marker.title}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              className="mt-4"
-              variant="danger"
-              onClick={() => {
-                setMarkers([])
-                setMode('default')
-              }}
-            >
-              Сбросить
-            </Button>
-          </div>
+        {mode === 'markers' && (
+          <PolygonMarkerList
+            type="marker"
+            items={markers}
+            onReset={() => {
+              setMarkers([])
+              setMode('default')
+            }}
+            title={MESSAGES.MARKER_LIST_TITLE}
+          />
         )}
 
         {/* Форма создания маркера */}
         {isMarkerFormOpen && (
-          <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+          <div
+            className={`absolute top-1/2 left-1/2 ${UI_CONFIG.MODAL_Z_INDEX} -translate-x-1/2 -translate-y-1/2`}
+          >
             <NameColorForm
-              title="Создание маркера"
+              title={MESSAGES.MARKER_TITLE}
               name={markerName}
               color={markerColor}
               onNameChange={setMarkerName}
               onColorChange={setMarkerColor}
               onSave={handleMarkerSave}
               onCancel={handleMarkerCancel}
-              saveButtonText="Сохранить"
-              cancelButtonText="Отмена"
+              saveButtonText={MESSAGES.SAVE_BUTTON}
+              cancelButtonText={MESSAGES.CANCEL_BUTTON}
             />
           </div>
         )}
@@ -310,7 +274,7 @@ export const HomePage = () => {
 
       {/* Модальное окно для настройки полигона */}
       <NameColorForm
-        title="Настройки полигона"
+        title={MESSAGES.POLYGON_TITLE}
         name={polygonName}
         color={polygonColor}
         onNameChange={setPolygonName}
@@ -319,9 +283,11 @@ export const HomePage = () => {
         onCancel={handlePolygonModalClose}
         isModal={true}
         isOpen={isPolygonModalOpen}
-        saveButtonText="Сохранить"
-        cancelButtonText="Отмена"
+        saveButtonText={MESSAGES.SAVE_BUTTON}
+        cancelButtonText={MESSAGES.CANCEL_BUTTON}
       />
     </div>
   )
-}
+})
+
+HomePage.displayName = 'HomePage'

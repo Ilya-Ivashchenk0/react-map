@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import type { YandexMapModules } from './types'
 
+// Хук для загрузки и инициализации модулей Yandex Maps API
 export const useYandexMaps = (): YandexMapModules | undefined => {
   const [ymapsModules, setYmapsModules] = useState<YandexMapModules>()
 
-  const loadModules = async () => {
+  // Функция загрузки модулей Yandex Maps API
+  const loadModules = useCallback(async (): Promise<
+    YandexMapModules | undefined
+  > => {
     const ymaps3 = (window as any).ymaps3
 
     if (!ymaps3) return
@@ -55,15 +59,15 @@ export const useYandexMaps = (): YandexMapModules | undefined => {
         clusterByGrid
       }
     } catch (err) {
-      console.log(err)
+      console.error('Ошибка загрузки модулей Yandex Maps:', err)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadModules()
       .then(modules => setYmapsModules(modules))
-      .catch(err => console.log(err))
-  }, [])
+      .catch(err => console.error('Ошибка инициализации карты:', err))
+  }, [loadModules])
 
   return ymapsModules
 }

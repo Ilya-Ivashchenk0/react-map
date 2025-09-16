@@ -1,69 +1,182 @@
-# React + TypeScript + Vite
+# React Map Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Приложение для работы с картами на основе Yandex Maps API, позволяющее создавать полигоны и размещать маркеры.
 
-Currently, two official plugins are available:
+## 🚀 Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Интерактивная карта** с использованием Yandex Maps API
+- **Режим полигонов** - рисование и управление полигонами на карте
+- **Режим маркеров** - размещение и управление маркерами
+- **Цветовая настройка** - выбор цвета для полигонов и маркеров
+- **Модальные окна** - удобные формы для настройки объектов
+- **Адаптивный дизайн** - работает на всех устройствах
 
-## Expanding the ESLint configuration
+## 🛠 Технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** - основной фреймворк
+- **TypeScript** - типизация
+- **Tailwind CSS** - стилизация
+- **Yandex Maps API** - картографический сервис
+- **Vite** - сборщик
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Установка
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked
+1. Клонируйте репозиторий:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-])
+```bash
+git clone <repository-url>
+cd react-map
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Установите зависимости:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-])
+```bash
+npm install
 ```
+
+3. Создайте файл `.env` в корне проекта:
+
+```env
+VITE_YANDEX_MAP_BASE_URL=https://api-maps.yandex.ru/3.0/
+VITE_YANDEX_API_KEY=your_api_key_here
+```
+
+4. Запустите приложение:
+
+```bash
+npm run dev
+```
+
+## 🏗 Структура проекта
+
+```
+src/
+├── components/          # React компоненты
+│   ├── button/         # Компонент кнопки
+│   ├── color-picker/   # Выбор цвета
+│   ├── footer/         # Подвал
+│   ├── header/         # Заголовок
+│   ├── map/            # Карта
+│   ├── mode-switcher/  # Переключатель режимов
+│   └── name-color-form/ # Форма настройки
+├── hooks/              # Пользовательские хуки
+│   └── use-yandex-maps/ # Хук для работы с Yandex Maps
+├── pages/              # Страницы
+│   └── home-page/      # Главная страница
+├── types.d.ts          # Глобальные типы
+├── config/             # Конфигурация
+└── styles/             # Стили
+```
+
+## 🎯 Использование
+
+### Режимы работы
+
+1. **Просмотр** - стандартный режим карты
+2. **Полигон** - режим рисования полигонов
+3. **Маркеры** - режим размещения маркеров
+
+### Создание полигонов
+
+1. Переключитесь в режим "Полигон"
+2. Нажмите "Рисовать полигон"
+3. Кликайте по карте для добавления точек
+4. Нажмите "Сохранить" для завершения
+5. Введите название и выберите цвет в модальном окне
+
+### Создание маркеров
+
+1. Переключитесь в режим "Маркеры"
+2. Кликните по карте в нужном месте
+3. Введите название и выберите цвет
+4. Нажмите "Сохранить"
+
+## 🔧 Разработка
+
+### Доступные команды
+
+```bash
+npm run dev      # Запуск в режиме разработки
+npm run build    # Сборка для продакшена
+npm run preview  # Предварительный просмотр сборки
+npm run lint     # Проверка кода линтером
+npm run fix      # Автоисправление кода
+```
+
+### Архитектурные решения
+
+- **Компонентный подход** - все UI элементы вынесены в отдельные компоненты
+- **Типизация** - полная типизация с TypeScript
+- **Оптимизация** - использование React.memo, useMemo, useCallback
+- **Модульность** - четкое разделение ответственности между модулями
+- **Документация** - подробные комментарии к функциям и компонентам
+
+## 📝 Документация API
+
+### Основные типы
+
+```typescript
+// Режимы работы карты
+type ModeType = 'default' | 'polygon' | 'markers'
+
+// Доступные цвета
+type PolygonColor =
+  | 'blue'
+  | 'red'
+  | 'green'
+  | 'yellow'
+  | 'purple'
+  | 'orange'
+  | 'pink'
+
+// Полигон
+interface Polygon {
+  id: string
+  points: [number, number][]
+  isClosed: boolean
+  color: PolygonColor
+  name: string
+  createdAt: Date
+}
+
+// Маркер
+interface Marker {
+  id: string
+  coordinates: [number, number]
+  title: string
+  color: PolygonColor
+}
+```
+
+### Основные компоненты
+
+- **Map** - основной компонент карты с поддержкой рисования
+- **ModeSwitcher** - переключатель режимов работы
+- **ColorPicker** - выбор цвета для объектов
+- **NameColorForm** - форма настройки названия и цвета
+
+## 🤝 Вклад в проект
+
+1. Форкните репозиторий
+2. Создайте ветку для новой функции (`git checkout -b feature/amazing-feature`)
+3. Зафиксируйте изменения (`git commit -m 'Add amazing feature'`)
+4. Отправьте в ветку (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
+
+## 📄 Лицензия
+
+Этот проект лицензирован под MIT License.
+
+## 🐛 Известные проблемы
+
+- При быстром движении мыши во время рисования полигона некоторые точки могут пропускаться (оптимизация производительности)
+- Модальные окна не закрываются при клике вне их области
+
+## 🔮 Планы развития
+
+- [ ] Сохранение данных в localStorage
+- [ ] Экспорт/импорт полигонов и маркеров
+- [ ] Редактирование существующих объектов
+- [ ] Группировка маркеров
+- [ ] Измерение расстояний и площадей
+- [ ] Поддержка различных типов карт
